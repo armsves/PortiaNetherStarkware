@@ -23,9 +23,7 @@ from fastapi import FastAPI
 import threading
 from fastapi import Request, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import Response
-
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import Response, JSONResponse, HTMLResponse
 from pydantic import BaseModel
 import os
 import json
@@ -33,7 +31,10 @@ from urllib.parse import urlparse, parse_qs
 
 load_dotenv()
 
-TOKEN = "8168341785:AAGs29IPowFLnWzSr1IlEZqRtsXoeuSwm38"
+TOKEN = os.getenv("TOKEN")  # Get the TOKEN from the .env file
+
+if not TOKEN:
+    raise ValueError("TOKEN is not set in the .env file")
 
 # Define states
 MENU, OPTION1, OPTION2 = range(3)

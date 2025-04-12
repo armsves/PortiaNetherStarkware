@@ -1,5 +1,12 @@
 .env
-myenv
+myenv/
 __pycache__/
-.portia
-.vercel
+.portia/
+.vercel/
+*.log
+*.sqlite3
+*.pyc
+*.pyo
+*.pyd
+node_modules/
+static/  # If static files are not needed on the server
