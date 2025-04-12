@@ -422,3 +422,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+from mangum import Mangum
+
+# Wrap the FastAPI app with Mangum for AWS Lambda compatibility
+handler = Mangum(app)
