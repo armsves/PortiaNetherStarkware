@@ -8,7 +8,13 @@ How to use, clone the repo
 
 copy .env.example and add your keys, token is the telegram bot token (must create first a bot with botfather in telegram)
 
-pip install requirements.txt
+pip install uv
+
+uv venv myenv
+
+source myenv/bin/activate
+
+uv install -r requirements.txt
 
 uv run telegram_bot.py
 
