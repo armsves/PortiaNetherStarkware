@@ -6,6 +6,12 @@ This is a minimal implementation to showcase the uses of portia and interacting 
 
 How to use, clone the repo
 
+Install the ArgentX wallet https://www.argent.xyz/argent-x
+
+Set up your portia account https://app.portialabs.ai/
+
+Create your telegram bot @BotFather then /newbot and follow instructions
+
 copy .env.example and add your keys, token is the telegram bot token (must create first a bot with botfather in telegram)
 
 pip install uv

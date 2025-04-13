@@ -189,8 +189,6 @@ async def approve_and_mint(request: Request):
     """
     return HTMLResponse(content=html_response)
 
-######################################
-
 @app.get("/")
 async def get_wallet_balance(request: Request):
     # Parse the query parameters
@@ -342,23 +340,17 @@ async def get_wallet_balance(request: Request):
     """
     return HTMLResponse(content=html_response)
 
-@app.get("/status")
-def get_status():
-    return {"status": "Bot is running"}
-
-@app.post("/custom-action")
-def custom_action(data: dict):
-    # Process the incoming data
-    return {"received_data": data}
-
 async def start(update: Update, context: CallbackContext) -> int:
     keyboard = [
-        [InlineKeyboardButton("Option 1", callback_data="option1")],
-        [InlineKeyboardButton("Option 2", callback_data="option2")],
+        [InlineKeyboardButton("Check wallet's STRK balance", callback_data="option1")],
+        [InlineKeyboardButton("Deposit (approve/mint) into SRK YBT", callback_data="option2")],
+        [InlineKeyboardButton("Check wallet's STRK YBT balance", callback_data="option3")],
+        [InlineKeyboardButton("Withdraw (approve/mint) into SRK YBT", callback_data="option4")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "Welcome! Please choose an option:", reply_markup=reply_markup
+        "Welcome to PortiaNetherStarkAgent\n\n" \
+        "Please choose an option:", reply_markup=reply_markup
     )
     return MENU
 
@@ -368,7 +360,7 @@ async def button(update: Update, context: CallbackContext) -> int:
     await query.answer()
 
     if query.data == "option1":
-        await query.edit_message_text(text="You selected Option 1.")
+        await query.edit_message_text(text="Checking your wallet STRK balance")
         complete_tool_registry = example_tool_registry + custom_tool_registry
         portia = Portia(tools=complete_tool_registry)
         plan = portia.plan(
@@ -399,8 +391,8 @@ async def button(update: Update, context: CallbackContext) -> int:
             await query.edit_message_text(plan_run.outputs.final_output.summary)
         return OPTION1
     elif query.data == "option2":
-        await query.edit_message_text(text="You selected Option 2.")
-        webbrowser.open("https://example.com/option2")
+        await query.edit_message_text(text="Depositing into SRK YBT")
+        webbrowser.open("http://localhost:5173/api/approve-and-mint/?amount=1000")
         return OPTION2
     else:
         await query.edit_message_text(text="Unknown option selected.")
