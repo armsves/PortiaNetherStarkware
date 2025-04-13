@@ -38,7 +38,7 @@ class CheckWalletBalanceTool(Tool[str]):
                 argument_name="filename",
                 user_guidance=(
                     f"Please connect your wallet:"
-                ),action_url="https://portianetherstarkware.onrender.com:5173/?id=" + str(ctx.plan_run_id),)
+                ),action_url="http://localhost:5173/?id=" + str(ctx.plan_run_id),)
 
         return data  # Return the parsed JSON data
 

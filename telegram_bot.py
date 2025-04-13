@@ -14,6 +14,10 @@ from dotenv import load_dotenv
 from portia import (
     Portia,
     example_tool_registry,
+    ActionClarification,
+    InputClarification,
+    MultipleChoiceClarification,
+    PlanRunState,
 )
 from portia.cli import (
     CLIExecutionHooks,
@@ -366,15 +370,33 @@ async def button(update: Update, context: CallbackContext) -> int:
     if query.data == "option1":
         await query.edit_message_text(text="You selected Option 1.")
         complete_tool_registry = example_tool_registry + custom_tool_registry
-        portia = Portia(tools=complete_tool_registry, execution_hooks=CLIExecutionHooks())
-        plan_plan = portia.plan(
-            'Get the balance for wallet address 0x07B7B2EB67FEc2b054b5Da5c0e477Dd7CF97E7a9483C80e03bA4394699ED4154 and check the STRK token contract address 0x07b7b2eb67fec2b054b5da5c0e477dd7cf97e7a9483C80e03ba4394699ed4154 balance'
-        )
-        text = plan_plan.pretty_print()
+        portia = Portia(tools=complete_tool_registry)
+        plan = portia.plan(
+            'Get the balance for my wallet address 0x07B7B2EB67FEc2b054b5Da5c0e477Dd7CF97E7a9483C80e03bA4394699ED4154 and check the STRK token contract address 0x07b7b2eb67fec2b054b5da5c0e477dd7cf97e7a9483C80e03ba4394699ed4154 balance'
+            )
+
+        text = plan.pretty_print()
         await query.edit_message_text(text)
-        output = portia.run_plan(plan_plan)
-        await query.edit_message_text(output.outputs.final_output.summary)
-        webbrowser.open("https://example.com/option1")
+        #output = portia.run_plan(plan_plan)
+
+        # Run the plan
+        plan_run = portia.run_plan(plan)
+
+        while plan_run.state == PlanRunState.NEED_CLARIFICATION:
+        # If clarifications are needed, resolve them before resuming the plan run
+            for clarification in plan_run.get_outstanding_clarifications():
+                # Usual handling of Input and Multiple Choice clarifications
+                if isinstance(clarification, (InputClarification, MultipleChoiceClarification)):
+                    print(f"{clarification.user_guidance}")
+                    user_input = input("Please enter a value:\n" 
+                            + (("\n".join(clarification.options) + "\n") if "options" in clarification else ""))
+                    plan_run = portia.resolve_clarification(clarification, user_input, plan_run)
+                if isinstance(clarification, ActionClarification):
+                    await query.edit_message_text(text=str(clarification.user_guidance+" -- Please click on the link below to proceed."))
+                    webbrowser.open(str(clarification.action_url))
+                    plan_run = portia.wait_for_ready(plan_run)
+            plan_run = portia.resume(plan_run)
+            await query.edit_message_text(plan_run.outputs.final_output.summary)
         return OPTION1
     elif query.data == "option2":
         await query.edit_message_text(text="You selected Option 2.")
