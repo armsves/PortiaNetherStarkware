@@ -24,4 +24,6 @@ uv install -r requirements.txt
 
 uv run telegram_bot.py
 
+go to telegram, open a chat with your bot and click start and should give you the menu
+
 and it should work

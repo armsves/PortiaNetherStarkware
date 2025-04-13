@@ -26,7 +26,7 @@ from my_web3_tools.registry import custom_tool_registry
 from fastapi import FastAPI
 import threading
 from fastapi import Request, HTTPException
-from fastapi.staticfiles import StaticFiles
+#from fastapi.staticfiles import StaticFiles
 from fastapi.responses import Response, JSONResponse, HTMLResponse
 from pydantic import BaseModel
 import os
@@ -60,52 +60,36 @@ os.makedirs(BALANCES_DIR, exist_ok=True)
 class SaveBalanceRequest(BaseModel):
     id: str
     balance: str
-##################################################
 
 @app.post("/save-balance")
 async def save_balance(request: SaveBalanceRequest):
     try:
-        # Validate request body
         if not request.id and not request.balance:
             raise HTTPException(status_code=400, detail="Missing balance in the request body")
-
-        # Save balance to a file
         file_path = os.path.join(BALANCES_DIR, f"{request.id}.json")
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "w") as f:
             json.dump({"balance": request.balance}, f, indent=2)
-
         return {"message": "Balance saved successfully"}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-
-# Endpoint 2: /balances
 @app.api_route("/balances/{file_name}", methods=["GET", "HEAD"])
 async def get_balance(file_name: str, request: Request):
     try:
-        # Construct file path
         file_path = os.path.join(BALANCES_DIR, file_name)
-
-        # Check if file exists
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="File not found")
-
-        # Handle HEAD requests
         if request.method == "HEAD":
             return Response(status_code=200)
-
-        # Handle GET requests
         with open(file_path, "r") as f:
             content = json.load(f)
         return content
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
     
-# Endpoint 3: /api/approve-and-mint
 @app.get("/api/approve-and-mint", response_class=HTMLResponse)
 async def approve_and_mint(request: Request):
-    # Parse the query parameters
     query_params = parse_qs(urlparse(str(request.url)).query)
     amount = query_params.get("amount", [None])[0]
 
@@ -433,7 +417,6 @@ def main():
 
     application.add_handler(conv_handler)
     application.run_polling()
-
 
 if __name__ == "__main__":
     main()

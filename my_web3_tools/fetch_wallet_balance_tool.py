@@ -1,6 +1,6 @@
 from portia.tool import Tool, ToolRunContext
 from pydantic import BaseModel, Field
-import requests
+#import requests
 from portia.clarification import ActionClarification
 import json
 import os
@@ -22,14 +22,11 @@ class CheckWalletBalanceTool(Tool[str]):
         Run the CheckWalletBalanceTool to fetch the wallet balance.
         """
         try:
-            # Construct the relative path to the balances directory
             balances_dir = os.path.join(os.path.dirname(__file__), "../balances")
             file_path = os.path.join(balances_dir, f"{ctx.plan_run_id}.json")
 
             with open(file_path, "r") as file:
-                # Read the contents of the file
                 content = file.read()
-
             data = json.loads(content)
             print(f"data: {data}")
         except (FileNotFoundError, ValueError):
@@ -40,9 +37,5 @@ class CheckWalletBalanceTool(Tool[str]):
                     f"Please connect your wallet:"
                 ),action_url="http://localhost:5173/?id=" + str(ctx.plan_run_id),)
 
-        return data  # Return the parsed JSON data
-
-        #except requests.exceptions.RequestException as e:
-            # Handle network-related errors
-        #    return f"Error: Failed to fetch wallet balance. Details: {str(e)}"
-        
+        return data
+    
