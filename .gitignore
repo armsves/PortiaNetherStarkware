@@ -10,3 +10,4 @@ __pycache__/
 *.pyd
 node_modules/
 static/  # If static files are not needed on the server
+balances/
