@@ -5,7 +5,11 @@ The workflow shows the steps that will be executed beforehand so the user can un
 This is a minimal implementation to showcase the uses of portia and interacting with the blockchain to work as a defi assistant in python and some parts in html+javascript,
 
 How to use, clone the repo
+
 copy .env.example and add your keys, token is the telegram bot token (must create first a bot with botfather in telegram)
+
 pip install requirements.txt
+
 uv run telegram_bot.py
+
 and it should work
